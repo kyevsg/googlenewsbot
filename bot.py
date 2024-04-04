@@ -1,18 +1,17 @@
 import os
 
 import discord
-from discord.ext import app_commands, tasks
+from discord import app_commands
+
 from dotenv import load_dotenv
 
-from scraper import scraper
+# from scraper import scraper
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = app_commands.Bot(command_prefix = '!')
-bot.remove_command("help")
 
-MY_GUILD = discord.Object(id=0)
+MY_GUILD = discord.Object(id=) # add your server id here
 
 
 class MyClient(discord.Client):
@@ -31,8 +30,6 @@ client = MyClient(intents=intents)
 async def on_ready():
     print(f'Logged in as {client.user} (ID: {client.user.id})')
     print('------')
-
-client.run(TOKEN)
 
 @client.tree.command()
 async def ping(ctx):
@@ -53,3 +50,6 @@ async def help(ctx):
                     inline=False)
 
     await ctx.send(embed=embed)
+
+
+client.run(TOKEN)
