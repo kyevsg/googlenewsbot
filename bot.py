@@ -49,9 +49,11 @@ async def help(interaction: discord.Interaction):
     )
 
     embed.add_field(name="/ping", value="This command returns the bot's latency", inline=False)
-    embed.add_field(name="/news-setup [channel] [keywords included] [keywords excluded]",
-                    value="The bot answers with number of articles of the given country in the given language ",
+    embed.add_field(name="/news_setup [channel] [keyword]",
+                    value="The bot sends article links to your channel of choice every hour",
                     inline=False)
+    embed.add_field(name="/news_remove", value="This command removes the setup news at its list index", inline=False)
+    embed.add_field(name="/news_display", value="This command returns the news list", inline=False)
 
     await interaction.response.send_message(embed=embed)
 
@@ -65,7 +67,7 @@ async def news_setup(interaction: discord.Interaction, channel: discord.TextChan
     await interaction.response.send_message(f'News feed set up in {channel}!')
 
 
-@tasks.loop(hours=6)
+@tasks.loop(hours=1)
 async def fetch_article():
     await discord.client.wait_until_ready()
     for item in news_array:
@@ -73,6 +75,17 @@ async def fetch_article():
         entries = scraper(item[1])
         for entry in entries:
             await channel.send(entry.link)
+
+
+@client.tree.command()
+async def news_remove(interaction: discord.Interaction, index: int):
+    del news_array[index]
+    await interaction.response.send_message(f'Index {index} removed!')
+
+
+@client.tree.command()
+async def news_display(interaction: discord.Interaction):
+    await interaction.response.send_message(f'{news_array}')
 
 
 client.run(TOKEN)
