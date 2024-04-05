@@ -1,21 +1,14 @@
-import requests
-import pandas as pd
+import json
+import urllib.request
 
 
 def scraper(keyword):
-    params = {
-        'q': keyword,
-        'domain': 'google.com',
-        'tbm': 'nws'
-    }
-    api_url = 'https://api.scrape-it.cloud/scrape/google'
-    headers = {'x-api-key': 'YOUR-API-KEY'}
-    try:
-        response = requests.get(api_url, params=params, headers=headers)
-        if response.status_code == 200:
-            data = response.json()
-            news = data['newsResults']
-            df = pd.DataFrame(news)
-            df.to_excel("news_result.xlsx", index=False)
-    except Exception as e:
-        print('Error:', e)
+    apikey = "5cf770931a725b55ab1b18ca38d4e5b2"
+    url = f"https://gnews.io/api/v4/search?q={keyword}&max=10&apikey={apikey}"
+    article_links = []
+    with urllib.request.urlopen(url) as response:
+        data = json.loads(response.read().decode("utf-8"))
+        articles = data["articles"]
+        for i in range(len(articles)):
+            article_links.append(articles[i][url])
+        return article_links
