@@ -2,6 +2,7 @@ import os
 
 import discord
 from discord import app_commands
+from discord.ext import tasks
 
 from dotenv import load_dotenv
 
@@ -64,7 +65,7 @@ async def news_setup(interaction: discord.Interaction, channel: discord.TextChan
     await interaction.response.send_message(f'News feed set up in {channel}!')
 
 
-@discord.tasks.loop(hours=6)
+@tasks.loop(hours=6)
 async def fetch_article():
     await discord.client.wait_until_ready()
     for item in news_array:
